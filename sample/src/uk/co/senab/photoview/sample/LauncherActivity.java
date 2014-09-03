@@ -24,7 +24,7 @@ import android.widget.ListView;
 
 public class LauncherActivity extends ListActivity {
 
-    public static final String[] options = {"Simple Sample", "ViewPager Sample", "Rotation Sample"};
+    public static final String[] options = {"Simple Sample", "ViewPager Sample", "Rotation Sample", "Android Universal Image Loader"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +34,25 @@ public class LauncherActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Intent intent;
+        Class c;
 
         switch (position) {
             default:
             case 0:
-                intent = new Intent(this, SimpleSampleActivity.class);
+                c = SimpleSampleActivity.class;
                 break;
             case 1:
-                intent = new Intent(this, ViewPagerActivity.class);
+                c = ViewPagerActivity.class;
                 break;
             case 2:
-                intent = new Intent(this, RotationSampleActivity.class);
+                c = RotationSampleActivity.class;
+                break;
+            case 3:
+                c = AUILSampleActivity.class;
                 break;
         }
 
-        startActivity(intent);
+        startActivity(new Intent(this, c));
     }
 
 }

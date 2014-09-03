@@ -16,10 +16,14 @@
 package uk.co.senab.photoview.sample;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +32,8 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Random;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -36,7 +42,7 @@ import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
 
 public class SimpleSampleActivity extends Activity {
 
-    static final String PHOTO_TAP_TOAST_STRING = "Photo Tap! X: %.2f %% Y:%.2f %%";
+    static final String PHOTO_TAP_TOAST_STRING = "Photo Tap! X: %.2f %% Y:%.2f %% ID: %d";
     static final String SCALE_TOAST_STRING = "Scaled to: %.2ff";
 
     private TextView mCurrMatrixTv;
@@ -145,6 +151,24 @@ public class SimpleSampleActivity extends Activity {
             case R.id.menu_matrix_capture:
                 mCurrentDisplayMatrix = mAttacher.getDisplayMatrix();
                 return true;
+            case R.id.extract_visible_bitmap:
+                try {
+                    Bitmap bmp = mAttacher.getVisibleRectangleBitmap();
+                    File tmpFile = File.createTempFile("photoview", ".png",
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+                    FileOutputStream out = new FileOutputStream(tmpFile);
+                    bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    out.close();
+                    Intent share = new Intent(Intent.ACTION_SEND);
+                    share.setType("image/png");
+                    share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmpFile));
+                    startActivity(share);
+                    Toast.makeText(this, String.format("Extracted into: %s", tmpFile.getAbsolutePath()), Toast.LENGTH_SHORT).show();
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                    Toast.makeText(this, "Error occured while extracting bitmap", Toast.LENGTH_SHORT).show();
+                }
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -157,7 +181,7 @@ public class SimpleSampleActivity extends Activity {
             float xPercentage = x * 100f;
             float yPercentage = y * 100f;
 
-            showToast(String.format(PHOTO_TAP_TOAST_STRING, xPercentage, yPercentage));
+            showToast(String.format(PHOTO_TAP_TOAST_STRING, xPercentage, yPercentage, view == null ? 0 : view.getId()));
         }
     }
 
