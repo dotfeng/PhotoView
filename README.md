@@ -7,14 +7,16 @@ Sample with Android-Universal-Image-Loader https://github.com/nostra13/Android-U
 
 
 ```Java
-      PhotoView photoView = (PhotoView) findViewById(R.id.iv_photo);
+    PhotoView photoView = (PhotoView) findViewById(R.id.iv_photo);
 
-        if (!ImageLoader.getInstance().isInited()) {
-            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).build();
-            ImageLoader.getInstance().init(config);
-        }
+    if (!ImageLoader.getInstance().isInited()) {
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration
+			.Builder(getApplicationContext()).build();
+        ImageLoader.getInstance().init(config);
+    }
 
-        ImageLoader.getInstance().displayImage("http://pbs.twimg.com/media/Bist9mvIYAAeAyQ.jpg", photoView);
+    ImageLoader.getInstance().displayImage(
+		"http://pbs.twimg.com/media/Bist9mvIYAAeAyQ.jpg", photoView);
 ```
 
 
